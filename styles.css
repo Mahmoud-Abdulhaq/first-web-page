@@ -15,8 +15,10 @@
   --color-surface:   #ffffff;   /* cards / raised surfaces        */
   --color-text:      #2b2b2b;   /* primary text                  */
   --color-text-soft: #5a5a5a;   /* secondary text                */
-  --color-accent:   #d6336c;   /* links / highlights            */
-  --color-border:   #f3b8c4;   /* subtle borders                */
+  --color-accent:    #d6336c;   /* links / highlights            */
+  --color-accent-strong: #a61e4d; /* hover / pressed accent      */
+  --color-border:    #f3b8c4;   /* subtle borders                */
+  --color-accent-contrast: #ffffff; /* text on accent fills      */
 
   /* Typography */
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -35,6 +37,16 @@
   /* Layout */
   --maxw-content: 65rem;
   --radius: 0.5rem;
+  --radius-pill: 999px;
+
+  /* Effects */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px rgba(214, 51, 108, 0.4);
 }
 
 /* --------------------------------------------------------------------------
@@ -59,6 +71,12 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
 }
 
@@ -104,6 +122,13 @@ ul[role='list'],
 ol[role='list'] {
   list-style: none;
   padding: 0;
+}
+
+/* Shared focus styling for keyboard users */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius);
 }
 
 /* --------------------------------------------------------------------------
@@ -182,4 +207,157 @@ pre {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: var(--space-4);
+}
+
+.stack > * + * {
+  margin-block-start: var(--space-4);
+}
+
+/* --------------------------------------------------------------------------
+   Components
+   -------------------------------------------------------------------------- */
+
+/* Site header + primary navigation ----------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: 100%;
+  padding-block: var(--space-3);
+  padding-inline: var(--space-4);
+  background-color: var(--color-surface);
+  border-block-end: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.site-header__brand {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.site-header__brand:hover {
+  color: var(--color-accent);
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.nav a {
+  padding-block: var(--space-1);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-pill);
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.nav a:hover {
+  background-color: var(--color-bg);
+  color: var(--color-accent);
+}
+
+.nav a[aria-current='page'] {
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+/* Buttons ------------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding-block: var(--space-2);
+  padding-inline: var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: background-color var(--transition-base), border-color var(--transition-base),
+    transform var(--transition-fast);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn--primary {
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.btn--primary:hover {
+  background-color: var(--color-accent-strong);
+}
+
+.btn--secondary {
+  background-color: transparent;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn--secondary:hover {
+  background-color: var(--color-bg);
+}
+
+.btn--ghost {
+  background-color: transparent;
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+.btn--ghost:hover {
+  background-color: var(--color-surface);
+  border-color: var(--color-accent);
+}
+
+/* Cards -------------------------------------------------------------------- */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.card__title {
+  font-size: 1.25rem;
+}
+
+.card__body {
+  color: var(--color-text-soft);
+}
+
+.card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-block-start: auto;
+}
+
+/* Responsive grid for laying out cards ------------------------------------- */
+.grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
 }
